@@ -5,6 +5,10 @@ import History from '../screens/History';
 import Trade from '../screens/Trade';
 import Quotes from '../screens/Quotes';
 import Settings from '../components/Settings';
+import AccountSetup from '../screens/AccountSetup/AccountSetup';
+import BrokerInformation from '../screens/AccountSetup/BrokerInformation';
+import Brokers from '../screens/AccountSetup/Brokers';
+import Certificate from '../screens/AccountSetup/Certificate';
 
 const Tab = createBottomTabNavigator();
 export default function BottomNavigator() {
@@ -38,6 +42,26 @@ export default function BottomNavigator() {
       <Tab.Screen
         name="Settings"
         component={Settings}
+        options={{headerShown: false}}
+      />
+      <Tab.Screen
+        name="Accountsetup"
+        component={AccountSetup}
+        options={{headerShown: false}}
+      />
+      <Tab.Screen
+        name="BrokerInformation"
+        component={BrokerInformation}
+        options={{headerShown: false}}
+      />
+      <Tab.Screen
+        name="Brokers"
+        component={Brokers}
+        options={{headerShown: false}}
+      />
+      <Tab.Screen
+        name="Certificate"
+        component={Certificate}
         options={{headerShown: false}}
       />
     </Tab.Navigator>
