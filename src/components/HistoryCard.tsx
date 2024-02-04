@@ -47,8 +47,8 @@ const HistoryCard = ({
     <TouchableOpacity onPress={() => setOpened(!opened)}>
       <View
         style={{
-          borderWidth: 1,
-          borderBlockColor: '#ccc',
+          borderTopWidth: 1,
+          borderTopColor: '#ffffff44',
           padding: 5,
           flexDirection: 'row',
           alignItems: 'center',

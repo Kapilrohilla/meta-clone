@@ -204,7 +204,7 @@ export default function History() {
               <HistoryCard type={'positions'} displayObj={item} />
             )}
             keyExtractor={(value, index) => index.toString()}
-            estimatedItemSize={20}
+            estimatedItemSize={60}
           />
         </>
       )}
@@ -250,7 +250,7 @@ export default function History() {
               <HistoryCard type={'orders'} displayObj={item} />
             )}
             // keyExtractor={({item}: any) => item?.id}
-            estimatedItemSize={20}
+            estimatedItemSize={60}
           />
         </>
       )}
@@ -265,7 +265,7 @@ export default function History() {
               <HistoryCard type={'deals'} displayObj={data[0]} />
             )}
             keyExtractor={value => value.toString()}
-            estimatedItemSize={20}
+            estimatedItemSize={60}
           />
         </>
       )}
