@@ -3,6 +3,7 @@ import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import History from '../screens/History';
 import Trade from '../screens/Trade';
+import Quotes from '../screens/Quotes';
 
 const Tab = createBottomTabNavigator();
 export default function BottomNavigator() {
@@ -10,7 +11,7 @@ export default function BottomNavigator() {
     <Tab.Navigator>
       <Tab.Screen
         name="Quotes"
-        component={Temp}
+        component={Quotes}
         options={{headerShown: false}}
       />
       <Tab.Screen
