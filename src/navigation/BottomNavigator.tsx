@@ -9,6 +9,8 @@ import AccountSetup from '../screens/AccountSetup/AccountSetup';
 import BrokerInformation from '../screens/AccountSetup/BrokerInformation';
 import Brokers from '../screens/AccountSetup/Brokers';
 import Certificate from '../screens/AccountSetup/Certificate';
+import Mailbox from '../screens/Mailbox';
+import Message from '../screens/Message';
 
 const Tab = createBottomTabNavigator();
 export default function BottomNavigator() {
@@ -36,7 +38,7 @@ export default function BottomNavigator() {
       />
       <Tab.Screen
         name="Messages"
-        component={Temp}
+        component={Message}
         options={{headerShown: false}}
       />
       <Tab.Screen
@@ -62,6 +64,11 @@ export default function BottomNavigator() {
       <Tab.Screen
         name="Certificate"
         component={Certificate}
+        options={{headerShown: false}}
+      />
+      <Tab.Screen
+        name="Mailbox"
+        component={Mailbox}
         options={{headerShown: false}}
       />
     </Tab.Navigator>
