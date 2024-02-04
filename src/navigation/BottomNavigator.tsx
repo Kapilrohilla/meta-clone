@@ -4,6 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import History from '../screens/History';
 import Trade from '../screens/Trade';
 import Quotes from '../screens/Quotes';
+import Settings from '../components/Settings';
 
 const Tab = createBottomTabNavigator();
 export default function BottomNavigator() {
@@ -32,6 +33,11 @@ export default function BottomNavigator() {
       <Tab.Screen
         name="Messages"
         component={Temp}
+        options={{headerShown: false}}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={Settings}
         options={{headerShown: false}}
       />
     </Tab.Navigator>
