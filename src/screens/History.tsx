@@ -1,14 +1,69 @@
 import {View, Text, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import OctoIcons from 'react-native-vector-icons/Octicons';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import {FlashList} from '@shopify/flash-list';
 import HistoryCard from '../components/HistoryCard';
-const Tab = createMaterialTopTabNavigator();
+import {useIsFocused} from '@react-navigation/native';
 
 export default function History() {
   const [selectedTab, setSelectedTab] = useState(1);
+  const [data, setData] = useState([]);
+  const isFocused = useIsFocused();
+
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTliYTdhMTRiNGQyZmEzMDU4ZDM5ZWMiLCJpYXQiOjE3MDY3NzUzMDMsImV4cCI6MTcwNzM4MDEwM30.nzi54MF287yd_oZRMnJJldbNzX8MAvj3rLEGJnSz7Rc';
+  // fetch positions data
+  const fetchPositionData = (signal: any) => {
+    fetch('http://65.0.59.137:8080/get-closed-positions', {
+      signal,
+      method: 'GET',
+      headers: {
+        Authorization: token,
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(r => r.json())
+      .then(data => setData(data))
+      .catch(err => {
+        console.log(err.message);
+      });
+  };
+  const fetchOrderData = (signal: any) => {
+    fetch(`http://65.0.59.137:8080/get-user-orders`, {
+      signal,
+      method: 'GET',
+      headers: {
+        Authorization: token,
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(r => r.json())
+      .then(data => {
+        console.log(data, 'order api data');
+        setData(data);
+      })
+      .catch(err => {
+        console.log(err.message);
+      });
+  };
+  console.log(data, '<< -- data');
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    if (selectedTab === 1) {
+      fetchPositionData(signal);
+    } else if (selectedTab === 2) {
+      fetchOrderData(signal);
+    }
+    return () => {
+      controller.abort();
+      console.log('unsubscribbed');
+    };
+  }, [isFocused, selectedTab]);
+
   return (
     <View style={{flex: 1, backgroundColor: '#0f1821'}}>
       <HistoryTopBar />
@@ -144,12 +199,11 @@ export default function History() {
       {selectedTab === 1 && (
         <>
           <FlashList
-            data={[
-              1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-              20, 21,
-            ]}
-            renderItem={({item}) => <HistoryCard type={'positions'} />}
-            keyExtractor={value => value.toString()}
+            data={data}
+            renderItem={({item}) => (
+              <HistoryCard type={'positions'} displayObj={item} />
+            )}
+            keyExtractor={(value, index) => index.toString()}
             estimatedItemSize={20}
           />
         </>
@@ -187,12 +241,15 @@ export default function History() {
             </View>
           </View>
           <FlashList
-            data={[
-              1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-              20, 21,
-            ]}
-            renderItem={({item}) => <HistoryCard type={'orders'} />}
-            keyExtractor={value => value.toString()}
+            // data={[
+            //   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+            //   20, 21,
+            // ]}
+            data={data}
+            renderItem={({item}) => (
+              <HistoryCard type={'orders'} displayObj={item} />
+            )}
+            // keyExtractor={({item}: any) => item?.id}
             estimatedItemSize={20}
           />
         </>
@@ -204,7 +261,9 @@ export default function History() {
               1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
               20, 21,
             ]}
-            renderItem={({item}) => <HistoryCard type={'deals'} />}
+            renderItem={({item}) => (
+              <HistoryCard type={'deals'} displayObj={data[0]} />
+            )}
             keyExtractor={value => value.toString()}
             estimatedItemSize={20}
           />

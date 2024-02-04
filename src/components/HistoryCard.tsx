@@ -1,9 +1,48 @@
-import {useState} from 'react';
+import {memo, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {Text} from 'react-native-paper';
 
-const HistoryCard = ({type}: {type: 'positions' | 'orders' | 'deals'}) => {
+const HistoryCard = ({
+  type,
+  displayObj,
+}: {
+  displayObj: any;
+  type: 'positions' | 'orders' | 'deals';
+}) => {
   const [opened, setOpened] = useState(false);
+  const volume = displayObj?.volume;
+  const price = Number(displayObj?.price).toFixed(3);
+  const closePrice = Number(displayObj?.closePrice).toFixed(3);
+  const profit = Number(displayObj?.profit).toFixed(3);
+  const typeNum = displayObj?.type;
+  const stopLoss = displayObj?.stopLoss;
+  const takeProfit = displayObj?.takeProfit;
+  const open = '';
+  const date = '';
+  const id = displayObj?.ticket;
+  const commission = displayObj?.commission;
+  const swap = displayObj?.swap;
+  let orderType: string;
+  if (typeNum === 0) {
+    orderType = 'Sell';
+  } else if (typeNum === 1) {
+    orderType = 'Buy';
+  } else if (typeNum === 2) {
+    orderType = 'Buy-Limit';
+  } else if (typeNum === 3) {
+    orderType = 'Sell-Limit';
+  } else if (typeNum === 4) {
+    orderType = 'Buy-Stop';
+  } else if (typeNum === 5) {
+    orderType = 'Sell-Stop';
+  } else if (typeNum === 6) {
+    orderType = 'Buy-Stop-Limit';
+  } else if (typeNum === 7) {
+    orderType = 'Sell-Stop-Limit';
+  } else {
+    orderType = 'invalid';
+  }
+  // console.log(displayObj, ',,, dispaly');
   return (
     <TouchableOpacity onPress={() => setOpened(!opened)}>
       <View
@@ -17,11 +56,23 @@ const HistoryCard = ({type}: {type: 'positions' | 'orders' | 'deals'}) => {
         }}>
         <View>
           <View style={{flexDirection: 'row', gap: 3}}>
-            <Text style={{color: '#fff', fontWeight: '600'}}>EURUSD</Text>
-            <Text style={{color: '#3c6dac', fontWeight: '500'}}>
-              buy{' '}
+            <Text style={{color: '#fff', fontWeight: '600'}}>
+              {displayObj?.symbol}
+            </Text>
+            <Text
+              style={{
+                color:
+                  typeNum === 0 ||
+                  typeNum === 3 ||
+                  typeNum === 5 ||
+                  typeNum === 7
+                    ? '#ce262c'
+                    : '#3c6dac',
+                fontWeight: '500',
+              }}>
+              {orderType + ' '}
               {type === 'positions'
-                ? ', 0.02'
+                ? `, ${volume}`
                 : type === 'deals'
                 ? ', in'
                 : null}
@@ -29,7 +80,7 @@ const HistoryCard = ({type}: {type: 'positions' | 'orders' | 'deals'}) => {
           </View>
           <Text style={{color: '#fff', opacity: 0.7, fontWeight: '600'}}>
             {type === 'positions'
-              ? '1.03945 → 1.34543'
+              ? `${price} → ${closePrice}`
               : type === 'orders'
               ? '0.01/0.01 at 0.08377'
               : type === 'deals'
@@ -43,12 +94,18 @@ const HistoryCard = ({type}: {type: 'positions' | 'orders' | 'deals'}) => {
             style={{
               color:
                 type === 'positions' || type === 'deals'
-                  ? '#3c6dac'
+                  ? // ? '#3c6dac'
+                    typeNum === 0 ||
+                    typeNum === 3 ||
+                    typeNum === 5 ||
+                    typeNum === 7
+                    ? '#ce262c'
+                    : '#3c6dac'
                   : '#ffffff66',
               fontWeight: '800',
             }}>
             {type === 'positions'
-              ? '10 000.00'
+              ? profit
               : type === 'orders'
               ? 'Filled'
               : type === 'deals'
@@ -73,12 +130,12 @@ const HistoryCard = ({type}: {type: 'positions' | 'orders' | 'deals'}) => {
               <View style={styles.textView}>
                 <Text style={styles.openedText}>S/L:</Text>
                 {type === 'orders' && <Text>-</Text>}
-                <Text style={styles.openedText}>1.038434</Text>
+                <Text style={styles.openedText}>{stopLoss}</Text>
               </View>
               <View style={styles.textView}>
                 <Text style={styles.openedText}>T/P:</Text>
                 {type === 'orders' && <Text>-</Text>}
-                <Text style={styles.openedText}>1.038434</Text>
+                <Text style={styles.openedText}>{takeProfit}</Text>
               </View>
             </View>
           )}
@@ -92,17 +149,17 @@ const HistoryCard = ({type}: {type: 'positions' | 'orders' | 'deals'}) => {
                 </View>
                 <View style={styles.textView}>
                   <Text style={styles.openedText}>Swap: </Text>
-                  <Text style={styles.openedText}>0.00</Text>
+                  <Text style={styles.openedText}>{swap}</Text>
                 </View>
               </View>
               <View style={{flexDirection: 'row', paddingHorizontal: 5}}>
                 <View style={styles.textView}>
                   <Text style={styles.openedText}>Id:</Text>
-                  <Text style={styles.openedText}>#10384340029384</Text>
+                  <Text style={styles.openedText}>#{id}</Text>
                 </View>
                 <View style={styles.textView}>
                   <Text style={styles.openedText}>Commission:</Text>
-                  <Text style={styles.openedText}>0.00</Text>
+                  <Text style={styles.openedText}>{commission}</Text>
                 </View>
               </View>
             </>
@@ -138,6 +195,7 @@ const HistoryCard = ({type}: {type: 'positions' | 'orders' | 'deals'}) => {
   );
 };
 export default HistoryCard;
+
 const styles = StyleSheet.create({
   textView: {
     padding: 5,
