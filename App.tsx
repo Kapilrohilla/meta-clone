@@ -6,6 +6,7 @@ import {PaperProvider} from 'react-native-paper';
 import Drawer from './src/navigation/Drawer';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import BottomNavigator from './src/navigation/BottomNavigator';
+import SocketContextProvider from './src/redux/SocketContext';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -13,15 +14,17 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="bottom"
-          screenOptions={{headerShown: false}}>
-          <Stack.Screen name="bottom" component={BottomNavigator} />
-          {/* <Stack.Screen name="drawer" component={Drawer} /> */}
-          {/* <History /> */}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <SocketContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="drawer"
+            screenOptions={{headerShown: false}}>
+            {/* <Stack.Screen name="bottom" component={BottomNavigator} /> */}
+            <Stack.Screen name="drawer" component={Drawer} />
+            {/* <History /> */}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SocketContextProvider>
     </PaperProvider>
   );
 }

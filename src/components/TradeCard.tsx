@@ -5,12 +5,34 @@ import {
   Touchable,
   StyleSheet,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useCallback, useContext, useState, memo} from 'react';
+import {useFocusEffect} from '@react-navigation/native';
+import {SocketContext} from '../redux/SocketContext';
 
-export default function TradeCard() {
+export default memo(function TradeCard({position}: any) {
   const sellColor = '#ce262c';
   const buyColor = '#3c6dac';
   const [isOpened, setIsOpened] = useState<boolean>(false);
+  const [socketData, setSocketData] = useState({});
+
+  const socket = useContext(SocketContext);
+  useFocusEffect(
+    useCallback(() => {
+      const handleNewMessage = (data: any) => {
+        console.log('Mounting');
+        const socketData = data?.newMessage;
+        if (position.symbol === socketData.symbol) {
+          setSocketData(socketData);
+        }
+      };
+      socket.on('newMessage', handleNewMessage);
+
+      return () => {
+        console.log('unmounting');
+        socket.off('newMessage', handleNewMessage);
+      };
+    }, []),
+  );
   return (
     <TouchableOpacity
       onPress={() => setIsOpened(!isOpened)}
@@ -27,12 +49,15 @@ export default function TradeCard() {
         }}>
         <View>
           <View style={{flexDirection: 'row', alignItems: 'baseline', gap: 5}}>
-            <Text style={{color: '#fff', fontWeight: '700'}}>USDCNH,</Text>
+            <Text style={{color: '#fff', fontWeight: '700'}}>
+              {position.symbol},
+            </Text>
             <Text style={{color: buyColor, fontWeight: '600'}}>buy 0.01</Text>
           </View>
           <View style={{flexDirection: 'row', gap: 5}}>
             <Text style={{color: '#ffffffaa', fontWeight: '700'}}>
-              7.5432 → 6.3234
+              {Number(position?.price).toFixed(4)} →{' '}
+              {Number(socketData?.ask).toFixed(4)}
             </Text>
           </View>
         </View>
@@ -89,7 +114,7 @@ export default function TradeCard() {
       )}
     </TouchableOpacity>
   );
-}
+});
 
 const styles = StyleSheet.create({
   bottomText: {

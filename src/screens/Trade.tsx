@@ -1,10 +1,38 @@
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import OctoIcons from 'react-native-vector-icons/Octicons';
 import TradeCard from '../components/TradeCard';
 
 export default function Trade() {
+  const [tradeData, setTradeData] = useState([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    var myHeaders = new Headers();
+    myHeaders.append(
+      'Authorization',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTliYTdhMTRiNGQyZmEzMDU4ZDM5ZWMiLCJpYXQiOjE3MDcxNTU1ODIsImV4cCI6MTcwNzc2MDM4Mn0.sicDBl7i-7fAk4WADlwUr4rvgKwKj6FGIfM1Q7QP1HI',
+    );
+
+    var requestOptions = {
+      method: 'GET',
+      signal,
+      headers: myHeaders,
+      redirect: 'follow',
+    };
+    //@ts-ignore
+    fetch('http://65.0.59.137:8080/get-positions', requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        const positions = result?.positions;
+        setTradeData(positions);
+      })
+      .catch(error => console.log('error', error));
+
+    return () => controller.abort();
+  }, []);
   return (
     <View style={{flex: 1, backgroundColor: '#0f1821'}}>
       <TradeTopbar />
@@ -46,8 +74,11 @@ export default function Trade() {
       </View>
       <View style={{height: 1, backgroundColor: '#ffffff55'}} />
       <ScrollView>
-        {[1, 2, 3, 4, 5].map(() => {
+        {/* {[1, 2, 3, 4, 5].map(() => {
           return <TradeCard />;
+        })} */}
+        {tradeData.map((position, index: number) => {
+          return <TradeCard key={index} position={position} />;
         })}
       </ScrollView>
     </View>

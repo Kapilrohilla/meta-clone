@@ -1,9 +1,36 @@
 import {View, Text, StatusBar} from 'react-native';
-import React from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
+import {SocketContext} from '../redux/SocketContext';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 
-export default function QuotesCard() {
+export default function QuotesCard({quoteData}: any) {
+  const [symbolSocketData, setSymbolSocketData] = useState({});
+  // const isFocused = useIsFocused();
+  const symbol: string = quoteData?.symbol;
+
   const sellColor = '#ce262c';
   const buyColor = '#3c6dac';
+  // console.log(quoteData);
+  const socket = useContext(SocketContext);
+  useFocusEffect(
+    useCallback(() => {
+      const handleNewMessage = (data: any) => {
+        console.log('Mounting');
+        const socketData = data?.newMessage;
+        if (symbol === socketData.symbol) {
+          // console.log(socketData);
+          setSymbolSocketData(socketData);
+        }
+      };
+      socket.on('newMessage', handleNewMessage);
+
+      return () => {
+        console.log('unmounting');
+        socket.off('newMessage', handleNewMessage);
+      };
+    }, []),
+  );
+
   return (
     <>
       <StatusBar backgroundColor={'#0f1821'} />
@@ -25,7 +52,8 @@ export default function QuotesCard() {
             </Text>
           </View>
           <Text style={{color: '#fff', fontWeight: '700', fontSize: 16}}>
-            EURUSD
+            {/* EURUSD */}
+            {symbol.toUpperCase()}
           </Text>
           <View style={{flexDirection: 'row', gap: 10}}>
             <Text style={{fontSize: 12, color: '#ffffff66', fontWeight: '500'}}>
@@ -83,7 +111,11 @@ export default function QuotesCard() {
               </Text>
             </View>
             <View>
-              <Text style={{fontSize: 12, color: '#ffffff88'}}>H: 1.23453</Text>
+              <Text style={{fontSize: 12, color: '#ffffff88'}}>
+                {/* H: 1.23453 */}
+                {/* @ts-ignore */}
+                H: {Number(symbolSocketData?.ask).toFixed(4)}
+              </Text>
             </View>
           </View>
         </View>

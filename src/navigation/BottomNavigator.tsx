@@ -41,7 +41,7 @@ export default function BottomNavigator() {
         component={Message}
         options={{headerShown: false}}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Settings"
         component={Settings}
         options={{headerShown: false}}
@@ -70,7 +70,7 @@ export default function BottomNavigator() {
         name="Mailbox"
         component={Mailbox}
         options={{headerShown: false}}
-      />
+      /> */}
     </Tab.Navigator>
   );
 }
